@@ -4,8 +4,12 @@ from app.main import create_app
 from flask_restx import Api
 from flask import Blueprint
 from app.main.utils.error_handlers import register_error_handlers
+from app.main.controller.auth_controller import api as auth_ns
+
+app = create_app(os.getenv("FLASK_ENV", "dev"))
 
 blueprint = Blueprint("api", __name__)
+
 authorizations = {
     "Bearer Auth": {
         "type": "apiKey",
@@ -23,9 +27,8 @@ api = Api(
     authorizations=authorizations,
 )
 
-app = create_app(os.getenv("FLASK_ENV", "dev"))
+api.add_namespace(auth_ns, path="/auth")
 
 app.register_blueprint(blueprint)
-app.app_context().push()
 
 register_error_handlers(api)

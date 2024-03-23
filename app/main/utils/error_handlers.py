@@ -12,11 +12,11 @@ def register_error_handlers(api: Api):
     def handle_bad_request_exception(error: BadRequestException):
         return {"message": error.message}, HTTPStatus.BAD_REQUEST
 
-    @api.errorhandler()
     @api.errorhandler(UnauthorizedException)
     def handle_unauthorized_exception(error: UnauthorizedException):
         return {"message": error.message}, HTTPStatus.UNAUTHORIZED
 
+    @api.errorhandler(Exception)
     def handle_generic_exception(error):
         print(error)
 
