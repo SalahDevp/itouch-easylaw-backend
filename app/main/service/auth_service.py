@@ -2,11 +2,10 @@ from typing import Tuple
 from app.main.utils.exceptions import (
     UnauthorizedException,
     NotFoundException,
-    BadRequestException,
 )
 from app.main.model.user_model import User
-from app.main import db
 from app.main.utils.auth import encode_auth_token
+from app.main.service.users_service import UsersService
 
 
 class Auth:
@@ -29,17 +28,4 @@ class Auth:
 
     @staticmethod
     def register_user(email: str, password: str, firstname: str, lastname: str) -> User:
-        user = User.query.filter_by(email=email).first()
-        if user:
-            raise BadRequestException("User already exists. Please Log in.")
-
-        new_user = User(
-            email=email,
-            password=password,
-            firstname=firstname,
-            lastname=lastname,
-        )
-
-        db.session.add(new_user)
-        db.session.commit()
-        return new_user
+        return UsersService.create_user(email, password, firstname, lastname)

@@ -5,13 +5,14 @@ from flask_restx import Api
 from flask import Blueprint
 from app.main.utils.error_handlers import register_error_handlers
 from app.main.controller.auth_controller import api as auth_ns
+from app.main.controller.users_controller import api as users_ns
 
 app = create_app(os.getenv("FLASK_ENV", "dev"))
 
 blueprint = Blueprint("api", __name__)
 
 authorizations = {
-    "Bearer Auth": {
+    "Bearer": {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
@@ -25,9 +26,11 @@ api = Api(
     version="1.0",
     description="ITOUCH EASYLAW PLATFORM API",
     authorizations=authorizations,
+    security="Bearer",
 )
 
 api.add_namespace(auth_ns, path="/auth")
+api.add_namespace(users_ns, path="/users")
 
 app.register_blueprint(blueprint)
 

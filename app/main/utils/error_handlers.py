@@ -1,6 +1,11 @@
 from flask_restx import Api
 from http import HTTPStatus
-from .exceptions import NotFoundException, BadRequestException, UnauthorizedException
+from .exceptions import (
+    NotFoundException,
+    BadRequestException,
+    UnauthorizedException,
+    ForbiddenException,
+)
 
 
 def register_error_handlers(api: Api):
@@ -15,6 +20,10 @@ def register_error_handlers(api: Api):
     @api.errorhandler(UnauthorizedException)
     def handle_unauthorized_exception(error: UnauthorizedException):
         return {"message": error.message}, HTTPStatus.UNAUTHORIZED
+
+    @api.errorhandler(ForbiddenException)
+    def handle_forbidden_exception(error: ForbiddenException):
+        return {"message": error.message}, HTTPStatus.FORBIDDEN
 
     @api.errorhandler(Exception)
     def handle_generic_exception(error):

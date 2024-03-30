@@ -3,7 +3,7 @@ from http import HTTPStatus
 from typing import Dict, Tuple
 
 from app.main.service.auth_service import Auth
-from app.main.controller.DTO.auth_dto import AuthDto
+from app.main.controller.Dto.auth_dto import AuthDto
 
 
 api = AuthDto.api
