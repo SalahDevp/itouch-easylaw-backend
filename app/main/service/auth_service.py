@@ -28,4 +28,5 @@ class Auth:
 
     @staticmethod
     def register_user(email: str, password: str, firstname: str, lastname: str) -> User:
-        return UsersService.create_user(email, password, firstname, lastname)
+        user_service = UsersService()
+        return user_service.create_user(email, password, firstname, lastname)

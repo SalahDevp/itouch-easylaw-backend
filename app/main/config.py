@@ -30,6 +30,10 @@ class ProductionConfig(Config):
     # SQLALCHEMY_DATABASE_URI = postgres_local_base
 
 
-config_by_name = dict(dev=DevelopmentConfig, test=TestingConfig, prod=ProductionConfig)
+config_by_name = {
+    "dev": DevelopmentConfig,
+    "test": TestingConfig,
+    "prod": ProductionConfig,
+}
 
 key = Config.SECRET_KEY
