@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from flask_restx import Resource
-from app.main.controller.Dto.user_dto import UserDto
+from app.main.controller.Dto.users_dto import UsersDto
 from app.main.decorators.auth_decorators import require_authentication, allow_roles
 from app.main.service.users_service import UsersService
 from flask import request
@@ -10,7 +10,7 @@ from app.main.decorators.users_decorators import (
 )
 from app.main.decorators import apply_decorator_to_all_methods
 
-api = UserDto.api
+api = UsersDto.api
 
 
 @api.route("/")
@@ -28,7 +28,7 @@ class UsersManagement(Resource):
     @api.param("lastname", "Lastname of the user")
     @api.param("role", "Role of the user")
     @api.param("active", "Status of the user (true/false)")
-    @api.marshal_list_with(UserDto.user, code=HTTPStatus.OK, envelope="data")
+    @api.marshal_list_with(UsersDto.user, code=HTTPStatus.OK, envelope="data")
     @require_authentication
     @allow_roles(["admin"])
     # TODO: Add pagination
@@ -42,8 +42,8 @@ class UsersManagement(Resource):
         description="""Create a new user.
              Permission: Admin"""
     )
-    @api.expect(UserDto.create_user_request, validate=True)
-    @api.marshal_with(UserDto.user, code=HTTPStatus.CREATED)
+    @api.expect(UsersDto.create_user_request, validate=True)
+    @api.marshal_with(UsersDto.user, code=HTTPStatus.CREATED)
     @require_authentication
     @allow_roles(["admin"])
     def post(self):
@@ -72,7 +72,7 @@ class UserDetails(Resource):
         description="""Get user details.
              Permission: Admin or User itself."""
     )
-    @api.marshal_with(UserDto.user, code=HTTPStatus.OK)
+    @api.marshal_with(UsersDto.user, code=HTTPStatus.OK)
     @allow_get_or_update_user
     def get(self, user_id):
         return self.users_service.get_user_by_id(user_id), HTTPStatus.OK
@@ -81,8 +81,8 @@ class UserDetails(Resource):
         description="""Update user details.
              Permission: Admin or User itself."""
     )
-    @api.expect(UserDto.update_user_request, validate=True)
-    @api.marshal_with(UserDto.user, code=HTTPStatus.OK)
+    @api.expect(UsersDto.update_user_request, validate=True)
+    @api.marshal_with(UsersDto.user, code=HTTPStatus.OK)
     @allow_get_or_update_user
     def put(self, user_id):
         data = api.payload

@@ -1,8 +1,8 @@
 from flask_restx import Namespace, fields
 
 
-class UserDto:
-    api = Namespace("User", description="User related operations")
+class UsersDto:
+    api = Namespace("Users", description="Users related operations")
 
     user = api.model(
         "Users list",

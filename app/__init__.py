@@ -6,6 +6,8 @@ from flask import Blueprint
 from app.main.utils.error_handlers import register_error_handlers
 from app.main.controller.auth_controller import api as auth_ns
 from app.main.controller.users_controller import api as users_ns
+from app.main.controller.subscriptions_controller import api as subscriptions_ns
+from app.main.controller.plans_controller import api as plans_ns
 
 app = create_app(os.getenv("FLASK_ENV", "dev"))
 
@@ -31,6 +33,8 @@ api = Api(
 
 api.add_namespace(auth_ns, path="/auth")
 api.add_namespace(users_ns, path="/users")
+api.add_namespace(subscriptions_ns, path="/subscriptions")
+api.add_namespace(plans_ns, path="/plans")
 
 app.register_blueprint(blueprint)
 

@@ -1,7 +1,6 @@
 from typing import Tuple
 from app.main.utils.exceptions import (
     UnauthorizedException,
-    NotFoundException,
 )
 from app.main.model.user_model import User
 from app.main.utils.auth import encode_auth_token
@@ -17,10 +16,8 @@ class Auth:
         :return Tuple[User, str]: Returns a tuple of the user object and the auth token
         """
         user: User = User.query.filter_by(email=email).first()
-        if not user:
-            raise NotFoundException("User does not exist")
 
-        if not user.check_password(password):
+        if not user or not user.check_password(password):
             raise UnauthorizedException("Invalid credentials")
 
         auth_token = encode_auth_token(user.id)
