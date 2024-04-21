@@ -7,7 +7,7 @@ api = Namespace("search", description="Search related operations")
 search_service = SearchService()
 
 
-@api.route("/supreme-court")
+@api.route("/search")
 class SupremeCourt(Resource):
     @api.param("search_query", "The search query")
     @api.param("page", "The page number")
