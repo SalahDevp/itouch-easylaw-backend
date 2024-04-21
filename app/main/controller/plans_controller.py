@@ -1,4 +1,4 @@
-from app.main.controller.Dto.plans_dto import PlansDto
+from app.main.controller.dto.plans_dto import PlansDto
 from app.main.decorators.auth_decorators import require_authentication, allow_roles
 from http import HTTPStatus
 from app.main.service.plans_service import PlansService

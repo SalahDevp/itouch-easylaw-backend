@@ -2,7 +2,7 @@ from flask_restx import Resource
 from http import HTTPStatus
 from app.main.service.search_service import SearchService
 from flask import request
-from app.main.controller.Dto.supreme_court_dto import SupremeCourtDto
+from app.main.controller.dto.supreme_court_dto import SupremeCourtDto
 
 api = SupremeCourtDto.api
 search_service = SearchService()

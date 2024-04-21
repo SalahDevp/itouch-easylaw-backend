@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from flask_restx import Resource
-from app.main.controller.Dto.users_dto import UsersDto
+from app.main.controller.dto.users_dto import UsersDto
 from app.main.decorators.auth_decorators import require_authentication, allow_roles
 from app.main.service.users_service import UsersService
 from flask import request

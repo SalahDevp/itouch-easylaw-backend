@@ -11,8 +11,8 @@ class Config:
     DEBUG = False
     CHARGILY_KEY = os.getenv("CHARGILY_KEY")
     CHARGILY_SECRET = os.getenv("CHARGILY_SECRET")
-    ELASTIC_PASSWORD = os.getenv("ELASTIC_PASSWORD")
-    ELASTIC_HOST = os.getenv("ELASTIC_HOST")
+    ELASTIC_PASSWORD = os.getenv("ELASTIC_PASSWORD", "changeme")
+    ELASTIC_HOST = os.getenv("ELASTIC_HOST", "https://localhost:9200")
 
 
 class DevelopmentConfig(Config):

@@ -1,7 +1,7 @@
 from flask_restx import Resource
 from app.main.service.payments_service import PaymentsService
 from http import HTTPStatus
-from app.main.controller.Dto.subscriptions_dto import SubscriptionsDto
+from app.main.controller.dto.subscriptions_dto import SubscriptionsDto
 from app.main.service.subscriptions_service import SubscriptionsService
 from app.main.decorators.auth_decorators import require_authentication
 from flask import g as top_g, request, Response

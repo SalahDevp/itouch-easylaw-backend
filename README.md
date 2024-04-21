@@ -19,7 +19,7 @@ docker pull ghcr.io/salahdevp/itouch-easylaw-backend:latest
 3. Run the container
 
 ```bash
-docker run -e ELASTIC_PASSWORD=<elastic password> -p 5000:5000 ghcr.io/islemmedjahdi/itouch-api-marketplace-backend:latest
+docker run -e ELASTIC_PASSWORD=<elastic password> -p 5000:5000 ghcr.io/salahdevp/itouch-easylaw-backend:latest
 ```
 
 Replace < elastic password > with your elastic search password.
