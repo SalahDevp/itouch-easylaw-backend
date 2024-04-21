@@ -8,6 +8,7 @@ from app.main.controller.auth_controller import api as auth_ns
 from app.main.controller.users_controller import api as users_ns
 from app.main.controller.subscriptions_controller import api as subscriptions_ns
 from app.main.controller.plans_controller import api as plans_ns
+from app.main.controller.search_controller import api as search_ns
 
 app = create_app(os.getenv("FLASK_ENV", "dev"))
 
@@ -35,6 +36,7 @@ api.add_namespace(auth_ns, path="/auth")
 api.add_namespace(users_ns, path="/users")
 api.add_namespace(subscriptions_ns, path="/subscriptions")
 api.add_namespace(plans_ns, path="/plans")
+api.add_namespace(search_ns, path="/search")
 
 app.register_blueprint(blueprint)
 
