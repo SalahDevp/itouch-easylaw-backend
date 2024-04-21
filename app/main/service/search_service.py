@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+from app.main.config import Config
 from typing import Any, List
 
 
@@ -6,7 +7,7 @@ class SearchService:
     def __init__(self):
         self.es = Elasticsearch(
             "https://localhost:9200",
-            basic_auth=("elastic", "gRakNDvDTcg+puCVov5W"),
+            basic_auth=("elastic", Config.ELASTIC_PASSWORD),
             verify_certs=False,
         )
 

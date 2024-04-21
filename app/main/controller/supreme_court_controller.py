@@ -1,9 +1,10 @@
-from flask_restx import Resource, Namespace
+from flask_restx import Resource
 from http import HTTPStatus
 from app.main.service.search_service import SearchService
 from flask import request
+from app.main.controller.Dto.supreme_court_dto import SupremeCourtDto
 
-api = Namespace("search", description="Search related operations")
+api = SupremeCourtDto.api
 search_service = SearchService()
 
 
@@ -17,6 +18,9 @@ class SupremeCourt(Resource):
     @api.param("end_date", "The end date yyyy/mm/dd")
     @api.param("decision_subject", "The decision subject")
     @api.param("search_field", "The field to search in (english)")
+    @api.response(
+        HTTPStatus.OK, description="Success", model=SupremeCourtDto.response_model
+    )
     def get(self):
         search_query = request.args.get("search_query", default="", type=str)
         page = request.args.get("page", default=1, type=int)
