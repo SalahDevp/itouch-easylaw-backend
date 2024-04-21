@@ -12,6 +12,7 @@ class Config:
     CHARGILY_KEY = os.getenv("CHARGILY_KEY")
     CHARGILY_SECRET = os.getenv("CHARGILY_SECRET")
     ELASTIC_PASSWORD = os.getenv("ELASTIC_PASSWORD")
+    ELASTIC_HOST = os.getenv("ELASTIC_HOST")
 
 
 class DevelopmentConfig(Config):

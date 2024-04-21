@@ -6,7 +6,7 @@ from typing import Any, List
 class SearchService:
     def __init__(self):
         self.es = Elasticsearch(
-            "https://localhost:9200",
+            Config.ELASTIC_HOST,
             basic_auth=("elastic", Config.ELASTIC_PASSWORD),
             verify_certs=False,
         )
