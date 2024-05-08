@@ -89,20 +89,33 @@ class SearchService:
         search_query: str,
         page: int,
         per_page: int,
-        start_date: str | None,
-        end_date: str | None,
+        signature_start_date: str | None,
+        signature_end_date: str | None,
+        journal_start_date: str | None,
+        journal_end_date: str | None,
         text_type: str | None,
         text_number: str | None,
         ministry: str | None,
-        content: str | None,
         field: str | None,
     ):
 
         filters: List[dict[str, Any]] = []
-        if start_date:
-            filters.append({"range": {"signature_date": {"gte": start_date}}})
-        if end_date:
-            filters.append({"range": {"signature_date": {"lte": end_date}}})
+        if signature_start_date:
+            filters.append({"range": {"signature_date": {"gte": signature_start_date}}})
+        if signature_end_date:
+            filters.append({"range": {"signature_date": {"lte": signature_end_date}}})
+        if journal_start_date:
+            filters.append({"range": {"journal_date": {"gte": journal_start_date}}})
+        if journal_end_date:
+            filters.append({"range": {"journal_date": {"lte": journal_end_date}}})
+        if text_type:
+            filters.append({"term": {"text_type": {"value": text_type}}})
+        if text_number:
+            filters.append({"term": {"text_number": {"value": text_number}}})
+        if ministry:
+            filters.append({"term": {"ministry": {"value": ministry}}})
+        if field:
+            filters.append({"term": {"field": {"value": field}}})
 
         # query
         if search_query == "":
@@ -128,5 +141,52 @@ class SearchService:
         }
 
         search_res = self.es.search(index="laws", body=es_query)
+
+        return self._format_search_res(search_res.body, page, per_page)
+
+    def constitution(
+        self,
+        search_query: str,
+        page: int,
+        per_page: int,
+        section_name: str | None,
+        chapter_name: str | None,
+        section_number: int | None,
+        chapter_number: int | None,
+        article_number: int | None,
+    ):
+
+        filters: List[dict[str, Any]] = []
+        if section_name:
+            filters.append({"term": {"section_name": {"value": section_name}}})
+        if chapter_name:
+            filters.append({"term": {"chapter_name": {"value": chapter_name}}})
+        if section_number:
+            filters.append({"term": {"section_number": {"value": section_number}}})
+        if chapter_number:
+            filters.append({"term": {"chapter_number": {"value": chapter_number}}})
+        if article_number:
+            filters.append({"term": {"article_number": {"value": article_number}}})
+
+        if search_query == "":
+            match_query: dict[str, Any] = {"match_all": {}}
+        else:
+            match_query = {
+                "match": {
+                    "article_text": search_query,
+                }
+            }
+
+        es_query = {
+            "query": {
+                "bool": {
+                    "must": match_query,
+                    "filter": filters,
+                }
+            },
+            "from": (page - 1) * per_page,
+            "size": per_page,
+        }
+        search_res = self.es.search(index="dostor", body=es_query)
 
         return self._format_search_res(search_res.body, page, per_page)

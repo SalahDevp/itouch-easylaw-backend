@@ -9,6 +9,7 @@ from app.main.controller.users_controller import api as users_ns
 from app.main.controller.subscriptions_controller import api as subscriptions_ns
 from app.main.controller.plans_controller import api as plans_ns
 from app.main.controller.supreme_court_controller import api as supreme_court_ns
+from app.main.controller.constitution_controller import api as constitution_ns
 
 app = create_app(os.getenv("FLASK_ENV", "dev"))
 
@@ -37,6 +38,7 @@ api.add_namespace(users_ns, path="/users")
 api.add_namespace(subscriptions_ns, path="/subscriptions")
 api.add_namespace(plans_ns, path="/plans")
 api.add_namespace(supreme_court_ns, path="/supreme-court")
+api.add_namespace(constitution_ns, path="/constitution")
 
 app.register_blueprint(blueprint)
 
