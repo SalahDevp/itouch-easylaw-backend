@@ -11,16 +11,16 @@ class SearchService:
             verify_certs=False,
         )
 
-    def _format_search_res(self, search_res, page, per_page) -> dict:
+    def _format_search_res(self, search_res: dict, page, per_page) -> dict:
         res: dict[str, Any] = {"data": []}
-        for hit in search_res.body["hits"]["hits"]:
+        for hit in search_res["hits"]["hits"]:
             item = hit["_source"]
             item["_id"] = hit["_id"]
             res["data"].append(item)
 
         res["results"] = len(res["data"])
         res["page"] = page
-        res["total_results"] = search_res.body["hits"]["total"]["value"]
+        res["total_results"] = search_res["hits"]["total"]["value"]
         res["has_more"] = (page * per_page) < res["total_results"]
         return res
 
@@ -82,4 +82,51 @@ class SearchService:
         }
         search_res = self.es.search(index="supreme-court", body=es_query)
 
-        return self._format_search_res(search_res, page, per_page)
+        return self._format_search_res(search_res.body, page, per_page)
+
+    def laws(
+        self,
+        search_query: str,
+        page: int,
+        per_page: int,
+        start_date: str | None,
+        end_date: str | None,
+        text_type: str | None,
+        text_number: str | None,
+        ministry: str | None,
+        content: str | None,
+        field: str | None,
+    ):
+
+        filters: List[dict[str, Any]] = []
+        if start_date:
+            filters.append({"range": {"signature_date": {"gte": start_date}}})
+        if end_date:
+            filters.append({"range": {"signature_date": {"lte": end_date}}})
+
+        # query
+        if search_query == "":
+            match_query: dict[str, Any] = {"match_all": {}}
+        # multi field search
+        else:
+            match_query = {
+                "multi_match": {
+                    "query": search_query,
+                    "fields": ["content^2", "long_content"],
+                }
+            }
+
+        es_query = {
+            "query": {
+                "bool": {
+                    "must": match_query,
+                    "filter": filters,
+                }
+            },
+            "from": (page - 1) * per_page,
+            "size": per_page,
+        }
+
+        search_res = self.es.search(index="laws", body=es_query)
+
+        return self._format_search_res(search_res.body, page, per_page)
