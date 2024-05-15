@@ -9,7 +9,7 @@ search_service = SearchService()
 
 
 @api.route("/search")
-class SupremeCourt(Resource):
+class Constitution(Resource):
     @api.param("search_query")
     @api.param("page")
     @api.param("per_page")
