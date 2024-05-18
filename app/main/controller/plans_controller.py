@@ -16,7 +16,6 @@ class Plans(Resource):
     def get(self):
         return plans_service.get_plans(), HTTPStatus.OK
 
-    @api.response(201, "Plan successfully created.")
     @api.doc(description="create a new plan\nPermission: Admin")
     @api.expect(PlansDto.create_plan_request, validate=True)
     @api.marshal_with(PlansDto.plan_details, code=HTTPStatus.CREATED)
@@ -27,10 +26,30 @@ class Plans(Resource):
         plan = plans_service.create_plan(
             data["name"],
             data["description"],
-            data["price"],
-            data["duration_days"],
+            data["price_month"],
+            data["price_year"],
             data["searches_per_day"],
             data["has_notifications_access"],
             data["has_gpt_access"],
         )
         return plan, HTTPStatus.CREATED
+
+    @api.doc(description="update a plan\nPermission: Admin")
+    @api.expect(PlansDto.update_plan_request, validate=True)
+    @api.marshal_with(PlansDto.plan_details, code=HTTPStatus.OK)
+    @require_authentication
+    @allow_roles(["admin"])
+    def put(self):
+        data = api.payload
+        plan = plans_service.update_plan(
+            data["id"],
+            data["name"],
+            data["description"],
+            data["price_month"],
+            data["price_year"],
+            data["searches_per_day"],
+            data["has_notifications_access"],
+            data["has_gpt_access"],
+            data["active"],
+        )
+        return plan, HTTPStatus.OK
