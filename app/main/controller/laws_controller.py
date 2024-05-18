@@ -1,4 +1,6 @@
 from flask_restx import Resource
+from app.main.decorators.auth_decorators import require_authentication, allow_roles
+from app.main.service.laws_service import LawsService
 from http import HTTPStatus
 from app.main.service.search_service import SearchService
 from flask import request
@@ -56,3 +58,20 @@ class Laws(Resource):
             ),
             HTTPStatus.OK,
         )
+
+
+@api.route("/<law_id>")
+class LawDetails(Resource):
+    @api.response(HTTPStatus.OK, description="Get a law by id", model=LawsDto.law_model)
+    def get(self, law_id: str):
+        return LawsService().get_law_by_id(law_id), HTTPStatus.OK
+
+    @api.doc(description="Update a law\nPermissions: moderator")
+    @api.expect(LawsDto.update_law_request, validate=True)
+    @api.response(HTTPStatus.NO_CONTENT, description="Success")
+    @require_authentication
+    @allow_roles(["moderator"])
+    def put(self, law_id: str):
+        data = api.payload
+        LawsService().update_law(law_id, data)
+        return "", HTTPStatus.NO_CONTENT
