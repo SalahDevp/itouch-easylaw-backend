@@ -190,3 +190,53 @@ class SearchService:
         search_res = self.es.search(index="dostor", body=es_query)
 
         return self._format_search_res(search_res.body, page, per_page)
+
+    def conseil(
+        self,
+        search_query: str,
+        page: int,
+        per_page: int,
+        number: int | None,
+        chamber: str | None,
+        section: str | None,
+        procedure: str | None,
+        start_date: str | None,
+        end_date: str | None,
+    ):
+        filters: List[dict[str, Any]] = []
+        if number:
+            filters.append({"term": {"number": {"value": number}}})
+        if chamber:
+            filters.append({"term": {"chamber": {"value": chamber}}})
+        if section:
+            filters.append({"term": {"section": {"value": section}}})
+        if procedure:
+            filters.append({"term": {"procedure": {"value": procedure}}})
+        if start_date:
+            filters.append({"range": {"date": {"gte": start_date}}})
+        if end_date:
+            filters.append({"range": {"date": {"lte": end_date}}})
+
+        if search_query == "":
+            match_query: dict[str, Any] = {"match_all": {}}
+        else:
+            match_query = {
+                "multi_match": {
+                    "query": search_query,
+                    "fields": ["subject^2", "principle"],
+                }
+            }
+
+        es_query = {
+            "query": {
+                "bool": {
+                    "must": match_query,
+                    "filter": filters,
+                }
+            },
+            "from": (page - 1) * per_page,
+            "size": per_page,
+        }
+        search_res = self.es.search(index="conseil", body=es_query)
+
+        return self._format_search_res(search_res.body, page, per_page)
