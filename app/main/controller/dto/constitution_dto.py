@@ -30,3 +30,15 @@ class ConstitutionDto:
             ),
         },
     )
+
+    update_article_request = api.model(
+        "update article",
+        {
+            "section_name": fields.String(),
+            "section_number": fields.Integer(),
+            "chapter_name": fields.String(),
+            "chapter_number": fields.Integer(),
+            "article_number": fields.Integer,
+            "article_text": fields.String(),
+        },
+    )
