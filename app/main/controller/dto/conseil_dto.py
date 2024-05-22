@@ -32,3 +32,17 @@ class ConseilDto:
             ),
         },
     )
+
+    update_decision_request = api.model(
+        "update decision",
+        {
+            "number": fields.Integer(),
+            "chamber": fields.String(),
+            "section": fields.String(),
+            "procedure": fields.String(),
+            "date": fields.String(),
+            "subject": fields.String(),
+            "principle": fields.String(),
+            "pdf_link": fields.String(),
+        },
+    )

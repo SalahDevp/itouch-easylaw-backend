@@ -1,4 +1,6 @@
 from flask_restx import Resource
+from app.main.decorators.auth_decorators import require_authentication, allow_roles
+from app.main.service.conseil_service import ConseilService
 from http import HTTPStatus
 from app.main.service.search_service import SearchService
 from flask import request
@@ -46,3 +48,24 @@ class Conseil(Resource):
             ),
             HTTPStatus.OK,
         )
+
+
+@api.route("/<decision_id>")
+class ConseilDetails(Resource):
+    @api.response(
+        HTTPStatus.OK,
+        description="Get a decision by id",
+        model=ConseilDto.article_model,
+    )
+    def get(self, decision_id: str):
+        return ConseilService().get_decision_by_id(decision_id), HTTPStatus.OK
+
+    @api.doc(description="Update a decision\nPermissions: moderator")
+    @api.expect(ConseilDto.update_decision_request, validate=True)
+    @api.response(HTTPStatus.NO_CONTENT, description="Success")
+    @require_authentication
+    @allow_roles(["moderator"])
+    def put(self, decision_id: str):
+        data = api.payload
+        ConseilService().update_decision(decision_id, data)
+        return "", HTTPStatus.NO_CONTENT
