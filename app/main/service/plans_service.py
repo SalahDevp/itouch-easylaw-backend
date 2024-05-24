@@ -11,7 +11,10 @@ class PlansService:
         description: str,
         price_month: float,
         price_year: float,
-        searches_per_day: int,
+        has_search_supreme_court: bool,
+        has_search_laws: bool,
+        has_search_constitution: bool,
+        has_search_conseil: bool,
         has_notifications_access: bool,
         has_gpt_access: bool,
     ) -> Plan:
@@ -23,7 +26,10 @@ class PlansService:
             description=description,
             price_month=price_month,
             price_year=price_year,
-            searches_per_day=searches_per_day,
+            has_search_supreme_court=has_search_supreme_court,
+            has_search_laws=has_search_laws,
+            has_search_constitution=has_search_constitution,
+            has_search_conseil=has_search_conseil,
             has_notifications_access=has_notifications_access,
             has_gpt_access=has_gpt_access,
         )
@@ -46,7 +52,10 @@ class PlansService:
         description: str,
         price_month: float,
         price_year: float,
-        searches_per_day: int,
+        has_search_supreme_court: bool,
+        has_search_laws: bool,
+        has_search_constitution: bool,
+        has_search_conseil: bool,
         has_notifications_access: bool,
         has_gpt_access: bool,
         active: bool,
@@ -60,7 +69,10 @@ class PlansService:
         plan.description = description
         plan.price_month = price_month
         plan.price_year = price_year
-        plan.searches_per_day = searches_per_day
+        plan.has_search_supreme_court = has_search_supreme_court
+        plan.has_search_laws = has_search_laws
+        plan.has_search_constitution = has_search_constitution
+        plan.has_search_conseil = has_search_conseil
         plan.has_notifications_access = has_notifications_access
         plan.has_gpt_access = has_gpt_access
         plan.active = active

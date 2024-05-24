@@ -11,7 +11,10 @@ class Plan(db.Model):  # type: ignore
     price_month: float = db.Column(db.Float, nullable=False)
     price_year: float = db.Column(db.Float, nullable=False)
     active: bool = db.Column(db.Boolean(), default=True)
-    searches_per_day: int = db.Column(db.Integer, nullable=False)
+    has_search_supreme_court: bool = db.Column(db.Boolean(), default=False)
+    has_search_laws: bool = db.Column(db.Boolean(), default=False)
+    has_search_constitution: bool = db.Column(db.Boolean(), default=False)
+    has_search_conseil: bool = db.Column(db.Boolean(), default=False)
     has_notifications_access = db.Column(db.Boolean(), default=False)
     has_gpt_access = db.Column(db.Boolean(), default=False)
 

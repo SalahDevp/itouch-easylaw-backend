@@ -17,8 +17,17 @@ class PlansDto:
                 required=True, description="Plan Price Per Year"
             ),
             "active": fields.Boolean(required=True, description="Plan Active Status"),
-            "searches_per_day": fields.Integer(
-                required=True, description="Plan Searches Per Day"
+            "has_search_supreme_court": fields.Boolean(
+                required=True, description="Plan Supreme Court Search Access"
+            ),
+            "has_search_laws": fields.Boolean(
+                required=True, description="Plan Laws Search Access"
+            ),
+            "has_search_constitution": fields.Boolean(
+                required=True, description="Plan Constitution Search Access"
+            ),
+            "has_search_conseil": fields.Boolean(
+                required=True, description="Plan Conseil Search Access"
             ),
             "has_notifications_access": fields.Boolean(
                 required=True, description="Plan Notifications Access"
@@ -40,8 +49,17 @@ class PlansDto:
             "price_year": fields.Float(
                 required=True, description="Plan Price Per Year"
             ),
-            "searches_per_day": fields.Integer(
-                required=True, description="Plan Searches Per Day"
+            "has_search_supreme_court": fields.Boolean(
+                required=True, description="Plan Supreme Court Search Access"
+            ),
+            "has_search_laws": fields.Boolean(
+                required=True, description="Plan Laws Search Access"
+            ),
+            "has_search_constitution": fields.Boolean(
+                required=True, description="Plan Constitution Search Access"
+            ),
+            "has_search_conseil": fields.Boolean(
+                required=True, description="Plan Conseil Search Access"
             ),
             "has_notifications_access": fields.Boolean(
                 required=True, description="Plan Notifications Access"
@@ -64,8 +82,17 @@ class PlansDto:
             "price_year": fields.Float(
                 required=True, description="Plan Price Per Year"
             ),
-            "searches_per_day": fields.Integer(
-                required=True, description="Plan Searches Per Day"
+            "has_search_supreme_court": fields.Boolean(
+                required=True, description="Plan Supreme Court Search Access"
+            ),
+            "has_search_laws": fields.Boolean(
+                required=True, description="Plan Laws Search Access"
+            ),
+            "has_search_constitution": fields.Boolean(
+                required=True, description="Plan Constitution Search Access"
+            ),
+            "has_search_conseil": fields.Boolean(
+                required=True, description="Plan Conseil Search Access"
             ),
             "has_notifications_access": fields.Boolean(
                 required=True, description="Plan Notifications Access"
