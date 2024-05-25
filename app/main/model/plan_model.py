@@ -1,4 +1,10 @@
 from app.main import db
+from enum import Enum
+
+
+class PlanDuration(Enum):
+    MONTHLY = "monthly"
+    YEARLY = "yearly"
 
 
 class Plan(db.Model):  # type: ignore

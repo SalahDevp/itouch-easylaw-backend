@@ -9,6 +9,9 @@ class SubscriptionsDto:
         "Create Checkout Request",
         {
             "plan_id": fields.Integer(required=True, description="Plan ID"),
+            "plan_duration": fields.String(
+                required=True, description="Duration", enum=["monthly", "yearly"]
+            ),
             "success_url": fields.String(required=True, description="Success URL"),
             "failure_url": fields.String(required=True, description="Failure URL"),
         },

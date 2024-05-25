@@ -1,4 +1,5 @@
 from flask_restx import Resource
+from app.main.model.plan_model import PlanDuration
 from app.main.service.payments_service import PaymentsService
 from http import HTTPStatus
 from app.main.controller.dto.subscriptions_dto import SubscriptionsDto
@@ -34,8 +35,13 @@ class Checkout(Resource):
     @require_authentication
     def post(self):
         data = api.payload
+        plan_duration = PlanDuration(data["plan_duration"].lower())
         checkout_url = subscription_service.create_checkout(
-            data["plan_id"], data["success_url"], data["failure_url"], top_g.user["id"]
+            data["plan_id"],
+            plan_duration,
+            data["success_url"],
+            data["failure_url"],
+            top_g.user["id"],
         )
         return {"checkout_url": checkout_url}, HTTPStatus.CREATED
 
@@ -48,8 +54,11 @@ class ChargilyWebhook(Resource):
         payload = request.json
         if payload["type"] == "checkout.paid":
             data = payload["data"]
+            plan_duration = PlanDuration(data["metadata"]["plan_duration"])
             subscription = subscription_service.activate_subscription(
-                data["metadata"]["user_id"], data["metadata"]["plan_id"]
+                data["metadata"]["user_id"],
+                data["metadata"]["plan_id"],
+                plan_duration,
             )
             PaymentsService().create_transaction(
                 subscription.id, data["amount"], data["currency"]
