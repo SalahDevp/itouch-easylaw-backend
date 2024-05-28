@@ -38,7 +38,7 @@ class SubscriptionsService:
         if plan_duration == PlanDuration.MONTHLY:
             price = plan.price_month
         elif plan_duration == PlanDuration.YEARLY:
-            price = plan.price_yeark
+            price = plan.price_year
         else:
             raise BadRequestException("Invalid plan duration")
 
