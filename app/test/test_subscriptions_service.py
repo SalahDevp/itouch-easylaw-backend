@@ -105,6 +105,19 @@ def test_activate_subscription_failure_non_existing_user(
         assert str(exc_info.value) == "User does not exist"
 
 
+def test_activate_subscription_failure_deactivated_plan(
+    app, subscriptions_service, user
+):
+    with patch.object(User, "query") as mock_user_query, patch.object(
+        Plan, "query"
+    ) as mock_plan_query:
+        mock_user_query.filter_by.return_value.first.return_value = user
+        mock_plan_query.filter_by.return_value.first.return_value = Plan(active=False)
+        with pytest.raises(BadRequestException) as exc_info:
+            subscriptions_service.activate_subscription(1, 1, PlanDuration.MONTHLY)
+        assert str(exc_info.value) == "Plan is not active"
+
+
 def test_activate_subscription_failure_non_existing_plan(
     app, subscriptions_service, user
 ):

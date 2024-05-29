@@ -64,7 +64,8 @@ class SubscriptionsService:
         plan = Plan.query.filter_by(id=plan_id).first()
         if plan is None:
             raise NotFoundException("Plan does not exist")
-
+        if plan.active is False:
+            raise BadRequestException("Plan is not active")
         if plan_duration == PlanDuration.MONTHLY:
             expiry_date = datetime.now() + relativedelta(months=1)
         elif plan_duration == PlanDuration.YEARLY:
