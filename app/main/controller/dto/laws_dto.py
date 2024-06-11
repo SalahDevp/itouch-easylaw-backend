@@ -18,6 +18,7 @@ class LawsDto:
             "long_content": fields.String(),
             "journal_number": fields.Integer(),
             "journal_page": fields.Integer(),
+            "journal_link": fields.String(),
         },
     )
 
