@@ -23,6 +23,10 @@ class Laws(Resource):
     @api.param("text_number")
     @api.param("ministry")
     @api.param("field")
+    @api.param(
+        "sort_by",
+        "'journal_date' or 'signature_date' (or don't include to sort by relevance)",
+    )
     @api.response(HTTPStatus.OK, description="Success", model=LawsDto.search_response)
     def get(self):
         search_query = request.args.get("search_query", default="", type=str)
@@ -42,6 +46,7 @@ class Laws(Resource):
         text_number = request.args.get("text_number", default=None, type=str)
         ministry = request.args.get("ministry", default=None, type=str)
         field = request.args.get("field", default=None, type=str)
+        sort_by = request.args.get("sort_by", default=None, type=str)
         return (
             search_service.laws(
                 search_query,
@@ -55,6 +60,7 @@ class Laws(Resource):
                 text_number,
                 ministry,
                 field,
+                sort_by,
             ),
             HTTPStatus.OK,
         )

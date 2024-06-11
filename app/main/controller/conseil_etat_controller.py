@@ -21,6 +21,10 @@ class Conseil(Resource):
     @api.param("start_date")
     @api.param("end_date")
     @api.param("number")
+    @api.param(
+        "sort_by",
+        description="'date' (or don't include to sort by relevance)",
+    )
     @api.response(
         HTTPStatus.OK, description="Success", model=ConseilDto.search_response
     )
@@ -34,6 +38,7 @@ class Conseil(Resource):
         procedure = request.args.get("procedure", default=None, type=str)
         start_date = request.args.get("start_date", default=None, type=str)
         end_date = request.args.get("end_date", default=None, type=str)
+        sort_by = request.args.get("sort_by", default=None, type=str)
         return (
             search_service.conseil(
                 search_query,
@@ -45,6 +50,7 @@ class Conseil(Resource):
                 procedure,
                 start_date,
                 end_date,
+                sort_by,
             ),
             HTTPStatus.OK,
         )

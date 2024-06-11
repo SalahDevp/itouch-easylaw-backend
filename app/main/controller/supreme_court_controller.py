@@ -20,6 +20,7 @@ class SupremeCourt(Resource):
     @api.param("end_date", "The end date yyyy/mm/dd")
     @api.param("decision_subject", "The decision subject")
     @api.param("search_field", "The field to search in (english)")
+    @api.param("sort_by", "'date' (or don't include to sort by relevance)")
     @api.response(
         HTTPStatus.OK, description="Success", model=SupremeCourtDto.response_model
     )
@@ -32,6 +33,7 @@ class SupremeCourt(Resource):
         end_date = request.args.get("end_date", default=None, type=str)
         subject = request.args.get("decision_subject", default=None, type=str)
         search_field = request.args.get("search_field", default=None, type=str)
+        sort_by = request.args.get("sort_by", default=None, type=str)
         return (
             search_service.supreme_court_decisions(
                 search_query,
@@ -42,6 +44,7 @@ class SupremeCourt(Resource):
                 search_field,
                 subject,
                 number,
+                sort_by,
             ),
             HTTPStatus.OK,
         )

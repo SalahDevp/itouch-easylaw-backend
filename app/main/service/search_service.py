@@ -16,6 +16,7 @@ class SearchService:
         search_field: str | None,
         subject: str | None,
         number: int | None,
+        sort_by: str | None,
     ):
         params: dict[str, str | None] = {
             "search_query": search_query,
@@ -26,6 +27,7 @@ class SearchService:
             "search_field": search_field,
             "subject": subject,
             "number": str(number),
+            "sort_by": sort_by,
         }
 
         response = requests.get(self.url + "/supreme-court", params=params)
@@ -44,6 +46,7 @@ class SearchService:
         text_number: str | None,
         ministry: str | None,
         field: str | None,
+        sort_by: str | None,
     ):
 
         params: dict[str, str | int | None] = {
@@ -58,6 +61,7 @@ class SearchService:
             "text_number": text_number,
             "ministry": ministry,
             "field": field,
+            "sort_by": sort_by,
         }
 
         response = requests.get(self.url + "/laws", params=params)
@@ -99,6 +103,7 @@ class SearchService:
         procedure: str | None,
         start_date: str | None,
         end_date: str | None,
+        sort_by: str | None,
     ):
         params: dict[str, str | int | None] = {
             "search_query": search_query,
@@ -110,6 +115,7 @@ class SearchService:
             "procedure": procedure,
             "start_date": start_date,
             "end_date": end_date,
+            "sort_by": sort_by,
         }
         response = requests.get(self.url + "/conseil", params=params)
         return response.json()
