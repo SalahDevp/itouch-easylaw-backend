@@ -12,6 +12,7 @@ from app.main.controller.supreme_court_controller import api as supreme_court_ns
 from app.main.controller.constitution_controller import api as constitution_ns
 from app.main.controller.laws_controller import api as laws_ns
 from app.main.controller.conseil_etat_controller import api as conseil_etat_ns
+from app.main.controller.scrapping_controller import api as scrapping_ns
 
 app = create_app(os.getenv("FLASK_ENV", "dev"))
 
@@ -43,6 +44,7 @@ api.add_namespace(supreme_court_ns, path="/supreme-court")
 api.add_namespace(constitution_ns, path="/constitution")
 api.add_namespace(laws_ns, path="/laws")
 api.add_namespace(conseil_etat_ns, path="/conseil-etat")
+api.add_namespace(scrapping_ns, path="/scraping")
 
 app.register_blueprint(blueprint)
 
