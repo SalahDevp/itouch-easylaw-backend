@@ -13,7 +13,7 @@ class Config:
     CHARGILY_SECRET = os.getenv("CHARGILY_SECRET")
     ELASTIC_PASSWORD = os.getenv("ELASTIC_PASSWORD", "changeme")
     ELASTIC_HOST = os.getenv("ELASTIC_HOST", "https://localhost:9200")
-    SEARCH_SERVICE_URL = os.getenv("SEARCH_SERVICE_URL")
+    SEARCH_SERVICE_URL = os.getenv("SEARCH_SERVICE_URL", "http://localhost:8000")
 
     @staticmethod
     def check_env_vars():
