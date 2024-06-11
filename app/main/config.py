@@ -13,6 +13,19 @@ class Config:
     CHARGILY_SECRET = os.getenv("CHARGILY_SECRET")
     ELASTIC_PASSWORD = os.getenv("ELASTIC_PASSWORD", "changeme")
     ELASTIC_HOST = os.getenv("ELASTIC_HOST", "https://localhost:9200")
+    SEARCH_SERVICE_URL = os.getenv("SEARCH_SERVICE_URL")
+
+    @staticmethod
+    def check_env_vars():
+        env_vars = ["CHARGILY_KEY", "CHARGILY_SECRET", "SEARCH_SERVICE_URL"]
+        for var in env_vars:
+            if getattr(Config, var) is None:
+                raise EnvironmentError(
+                    f"The environment variable {var} is not initialized."
+                )
+
+
+Config.check_env_vars()
 
 
 class DevelopmentConfig(Config):
