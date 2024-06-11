@@ -1,28 +1,10 @@
-from elasticsearch import Elasticsearch
 from app.main.config import Config
-from typing import Any, List
+import requests
 
 
 class SearchService:
     def __init__(self):
-        self.es = Elasticsearch(
-            Config.ELASTIC_HOST,
-            basic_auth=("elastic", Config.ELASTIC_PASSWORD),
-            verify_certs=False,
-        )
-
-    def _format_search_res(self, search_res: dict, page, per_page) -> dict:
-        res: dict[str, Any] = {"data": []}
-        for hit in search_res["hits"]["hits"]:
-            item = hit["_source"]
-            item["_id"] = hit["_id"]
-            res["data"].append(item)
-
-        res["results"] = len(res["data"])
-        res["page"] = page
-        res["total_results"] = search_res["hits"]["total"]["value"]
-        res["has_more"] = (page * per_page) < res["total_results"]
-        return res
+        self.url = Config.SEARCH_SERVICE_URL
 
     def supreme_court_decisions(
         self,
@@ -35,54 +17,19 @@ class SearchService:
         subject: str | None,
         number: int | None,
     ):
-        filters: List[dict[str, Any]] = []
-        if start_date:
-            filters.append({"range": {"date": {"gte": start_date}}})
-        if end_date:
-            filters.append({"range": {"date": {"lte": end_date}}})
-        if subject:
-            filters.append({"term": {"subject.keyword": {"value": subject}}})
-        if number:
-            filters.append({"term": {"number": {"value": number}}})
-
-        if search_query == "":
-            match_query: dict[str, Any] = {"match_all": {}}
-        # search by specific field
-        elif search_field:
-            match_query = {"match": {search_field: search_query}}
-        # multi field search
-        else:
-            match_query = {
-                "multi_match": {
-                    "query": search_query,
-                    "fields": [
-                        "subject",
-                        "parties",
-                        "keywords",
-                        "reference",
-                        "principle",
-                        "ground_of_appeal",
-                        "supreme_court_response",
-                        "verdict",
-                        "president",
-                        "reporting_judge",
-                    ],
-                }
-            }
-
-        es_query = {
-            "query": {
-                "bool": {
-                    "must": match_query,
-                    "filter": filters,
-                }
-            },
-            "from": (page - 1) * per_page,
-            "size": per_page,
+        params: dict[str, str | None] = {
+            "search_query": search_query,
+            "page": str(page),
+            "per_page": str(per_page),
+            "start_date": start_date,
+            "end_date": end_date,
+            "search_field": search_field,
+            "subject": subject,
+            "number": str(number),
         }
-        search_res = self.es.search(index="supreme-court", body=es_query)
 
-        return self._format_search_res(search_res.body, page, per_page)
+        response = requests.get(self.url + "/supreme-court", params=params)
+        return response.json()
 
     def laws(
         self,
@@ -99,50 +46,22 @@ class SearchService:
         field: str | None,
     ):
 
-        filters: List[dict[str, Any]] = []
-        if signature_start_date:
-            filters.append({"range": {"signature_date": {"gte": signature_start_date}}})
-        if signature_end_date:
-            filters.append({"range": {"signature_date": {"lte": signature_end_date}}})
-        if journal_start_date:
-            filters.append({"range": {"journal_date": {"gte": journal_start_date}}})
-        if journal_end_date:
-            filters.append({"range": {"journal_date": {"lte": journal_end_date}}})
-        if text_type:
-            filters.append({"term": {"text_type": {"value": text_type}}})
-        if text_number:
-            filters.append({"term": {"text_number": {"value": text_number}}})
-        if ministry:
-            filters.append({"term": {"ministry": {"value": ministry}}})
-        if field:
-            filters.append({"term": {"field": {"value": field}}})
-
-        # query
-        if search_query == "":
-            match_query: dict[str, Any] = {"match_all": {}}
-        # multi field search
-        else:
-            match_query = {
-                "multi_match": {
-                    "query": search_query,
-                    "fields": ["content^2", "long_content"],
-                }
-            }
-
-        es_query = {
-            "query": {
-                "bool": {
-                    "must": match_query,
-                    "filter": filters,
-                }
-            },
-            "from": (page - 1) * per_page,
-            "size": per_page,
+        params: dict[str, str | int | None] = {
+            "search_query": search_query,
+            "page": page,
+            "per_page": per_page,
+            "signature_start_date": signature_start_date,
+            "signature_end_date": signature_end_date,
+            "journal_start_date": journal_start_date,
+            "journal_end_date": journal_end_date,
+            "text_type": text_type,
+            "text_number": text_number,
+            "ministry": ministry,
+            "field": field,
         }
 
-        search_res = self.es.search(index="laws", body=es_query)
-
-        return self._format_search_res(search_res.body, page, per_page)
+        response = requests.get(self.url + "/laws", params=params)
+        return response.json()
 
     def constitution(
         self,
@@ -156,40 +75,18 @@ class SearchService:
         article_number: int | None,
     ):
 
-        filters: List[dict[str, Any]] = []
-        if section_name:
-            filters.append({"term": {"section_name": {"value": section_name}}})
-        if chapter_name:
-            filters.append({"term": {"chapter_name": {"value": chapter_name}}})
-        if section_number:
-            filters.append({"term": {"section_number": {"value": section_number}}})
-        if chapter_number:
-            filters.append({"term": {"chapter_number": {"value": chapter_number}}})
-        if article_number:
-            filters.append({"term": {"article_number": {"value": article_number}}})
-
-        if search_query == "":
-            match_query: dict[str, Any] = {"match_all": {}}
-        else:
-            match_query = {
-                "match": {
-                    "article_text": search_query,
-                }
-            }
-
-        es_query = {
-            "query": {
-                "bool": {
-                    "must": match_query,
-                    "filter": filters,
-                }
-            },
-            "from": (page - 1) * per_page,
-            "size": per_page,
+        params: dict[str, str | int | None] = {
+            "search_query": search_query,
+            "page": page,
+            "per_page": per_page,
+            "section_name": section_name,
+            "chapter_name": chapter_name,
+            "section_number": section_number,
+            "chapter_number": chapter_number,
+            "article_number": article_number,
         }
-        search_res = self.es.search(index="dostor", body=es_query)
-
-        return self._format_search_res(search_res.body, page, per_page)
+        response = requests.get(self.url + "/constitution", params=params)
+        return response.json()
 
     def conseil(
         self,
@@ -203,40 +100,16 @@ class SearchService:
         start_date: str | None,
         end_date: str | None,
     ):
-        filters: List[dict[str, Any]] = []
-        if number:
-            filters.append({"term": {"number": {"value": number}}})
-        if chamber:
-            filters.append({"term": {"chamber": {"value": chamber}}})
-        if section:
-            filters.append({"term": {"section": {"value": section}}})
-        if procedure:
-            filters.append({"term": {"procedure": {"value": procedure}}})
-        if start_date:
-            filters.append({"range": {"date": {"gte": start_date}}})
-        if end_date:
-            filters.append({"range": {"date": {"lte": end_date}}})
-
-        if search_query == "":
-            match_query: dict[str, Any] = {"match_all": {}}
-        else:
-            match_query = {
-                "multi_match": {
-                    "query": search_query,
-                    "fields": ["subject^2", "principle"],
-                }
-            }
-
-        es_query = {
-            "query": {
-                "bool": {
-                    "must": match_query,
-                    "filter": filters,
-                }
-            },
-            "from": (page - 1) * per_page,
-            "size": per_page,
+        params: dict[str, str | int | None] = {
+            "search_query": search_query,
+            "page": page,
+            "per_page": per_page,
+            "number": number,
+            "chamber": chamber,
+            "section": section,
+            "procedure": procedure,
+            "start_date": start_date,
+            "end_date": end_date,
         }
-        search_res = self.es.search(index="conseil", body=es_query)
-
-        return self._format_search_res(search_res.body, page, per_page)
+        response = requests.get(self.url + "/conseil", params=params)
+        return response.json()
