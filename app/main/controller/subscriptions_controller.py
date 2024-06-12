@@ -82,22 +82,35 @@ class Invoice(Resource):
         pdf = FPDF()
         pdf.add_page()
 
+        # Set title
+        pdf.set_font("Arial", 'B', 16)
+        pdf.cell(0, 10, 'EasyLaw Invoice', 0, 1, 'C')
+
+        # Add a line break
+        pdf.ln(10)
+
+        # Subscription details
         pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt=f"EasyLaw Invoice", ln=True)
-        pdf.cell(200, 10, txt=f"Invoice for Subscription ID: {subscription.id}", ln=True)
-        pdf.cell(200, 10, txt=f"User ID: {subscription.user_id}", ln=True)
-        pdf.cell(200, 10, txt=f"Plan: {subscription.plan.name}", ln=True)
-        pdf.cell(200, 10, txt=f"Start Date: {subscription.start_date.strftime('%Y-%m-%d')}", ln=True)
-        pdf.cell(200, 10, txt=f"Expiry Date: {subscription.expiry_date.strftime('%Y-%m-%d')}", ln=True)
-        pdf.cell(200, 10, txt=f"Active: {'Yes' if subscription.check_active_status() else 'No'}", ln=True)
+        pdf.cell(0, 10, f"Invoice for Subscription ID: {subscription.id}", 0, 1)
+        pdf.cell(0, 10, f"User ID: {subscription.user_id}", 0, 1)
+        pdf.cell(0, 10, f"Plan: {subscription.plan.name}", 0, 1)
+        pdf.cell(0, 10, f"Start Date: {subscription.start_date.strftime('%Y-%m-%d')}", 0, 1)
+        pdf.cell(0, 10, f"Expiry Date: {subscription.expiry_date.strftime('%Y-%m-%d')}", 0, 1)
+        pdf.cell(0, 10, f"Active: {'Yes' if subscription.check_active_status() else 'No'}", 0, 1)
         
+        # Add a line before the transactions
+        pdf.ln(5)
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(0, 10, "Transactions:", 0, 1)
+
+        # Transaction details
+        pdf.set_font("Arial", size=12)
         transactions = Transaction.query.filter_by(subscription_id=subscription.id).all()
         if transactions:
-            pdf.cell(200, 10, txt="Transactions:", ln=True)
             for transaction in transactions:
-                pdf.cell(200, 10, txt=f"Transaction ID: {transaction.id}, Amount: {transaction.amount} {transaction.currency}, Date: {transaction.created_at.strftime('%Y-%m-%d')}", ln=True)
-            
-
+                pdf.cell(0, 10, f"Transaction ID: {transaction.id}, Amount: {transaction.amount} {transaction.currency}, Date: {transaction.created_at.strftime('%Y-%m-%d')}", 0, 1)
+                
+        # Generate PDF in memory and send as response
         pdf_response = pdf.output(dest='S').encode('latin1')
         response = make_response(pdf_response)
         response.headers['Content-Type'] = 'application/pdf'
