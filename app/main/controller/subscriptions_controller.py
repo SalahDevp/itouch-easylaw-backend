@@ -7,6 +7,9 @@ from app.main.service.subscriptions_service import SubscriptionsService
 from app.main.decorators.auth_decorators import require_authentication
 from flask import g as top_g, request, Response
 from app.main.decorators.chargily_decorators import verify_signature
+from fpdf import FPDF
+from flask import make_response
+from app.main.model.transaction_model import Transaction
 
 api = SubscriptionsDto.api
 subscription_service = SubscriptionsService()
@@ -64,3 +67,39 @@ class ChargilyWebhook(Resource):
                 subscription.id, data["amount"], data["currency"]
             )
         return Response(status=HTTPStatus.OK)
+
+
+@api.route("/invoice")
+class Invoice(Resource):
+    @api.doc(description="Get subscription invoice")
+    @require_authentication
+    def get(self):
+        subscription = subscription_service.get_user_subscription(top_g.user["id"])
+
+        if not subscription:
+            api.abort(HTTPStatus.NOT_FOUND, "Subscription not found")
+
+        pdf = FPDF()
+        pdf.add_page()
+
+        pdf.set_font("Arial", size=12)
+        pdf.cell(200, 10, txt=f"EasyLaw Invoice", ln=True)
+        pdf.cell(200, 10, txt=f"Invoice for Subscription ID: {subscription.id}", ln=True)
+        pdf.cell(200, 10, txt=f"User ID: {subscription.user_id}", ln=True)
+        pdf.cell(200, 10, txt=f"Plan: {subscription.plan.name}", ln=True)
+        pdf.cell(200, 10, txt=f"Start Date: {subscription.start_date.strftime('%Y-%m-%d')}", ln=True)
+        pdf.cell(200, 10, txt=f"Expiry Date: {subscription.expiry_date.strftime('%Y-%m-%d')}", ln=True)
+        pdf.cell(200, 10, txt=f"Active: {'Yes' if subscription.check_active_status() else 'No'}", ln=True)
+        
+        transactions = Transaction.query.filter_by(subscription_id=subscription.id).all()
+        if transactions:
+            pdf.cell(200, 10, txt="Transactions:", ln=True)
+            for transaction in transactions:
+                pdf.cell(200, 10, txt=f"Transaction ID: {transaction.id}, Amount: {transaction.amount} {transaction.currency}, Date: {transaction.created_at.strftime('%Y-%m-%d')}", ln=True)
+            
+
+        pdf_response = pdf.output(dest='S').encode('latin1')
+        response = make_response(pdf_response)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=invoice.pdf'
+        return response
