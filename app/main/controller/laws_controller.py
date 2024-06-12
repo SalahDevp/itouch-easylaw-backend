@@ -1,5 +1,6 @@
 from flask_restx import Resource
 from app.main.decorators.auth_decorators import require_authentication, allow_roles
+from app.main.decorators.subscription_decorators import allow_search_laws
 from app.main.service.laws_service import LawsService
 from http import HTTPStatus
 from app.main.service.search_service import SearchService
@@ -28,6 +29,8 @@ class Laws(Resource):
         "'journal_date' or 'signature_date' (or don't include to sort by relevance)",
     )
     @api.response(HTTPStatus.OK, description="Success", model=LawsDto.search_response)
+    @require_authentication
+    @allow_search_laws
     def get(self):
         search_query = request.args.get("search_query", default="", type=str)
         page = request.args.get("page", default=1, type=int)
@@ -69,6 +72,7 @@ class Laws(Resource):
 @api.route("/<law_id>")
 class LawDetails(Resource):
     @api.response(HTTPStatus.OK, description="Get a law by id", model=LawsDto.law_model)
+    @require_authentication
     def get(self, law_id: str):
         return LawsService().get_law_by_id(law_id), HTTPStatus.OK
 

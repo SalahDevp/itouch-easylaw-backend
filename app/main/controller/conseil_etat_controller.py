@@ -5,6 +5,7 @@ from http import HTTPStatus
 from app.main.service.search_service import SearchService
 from flask import request
 from app.main.controller.dto.conseil_dto import ConseilDto
+from app.main.decorators.subscription_decorators import allow_search_conseil
 
 api = ConseilDto.api
 search_service = SearchService()
@@ -28,6 +29,8 @@ class Conseil(Resource):
     @api.response(
         HTTPStatus.OK, description="Success", model=ConseilDto.search_response
     )
+    @require_authentication
+    @allow_search_conseil
     def get(self):
         search_query = request.args.get("search_query", default="", type=str)
         page = request.args.get("page", default=1, type=int)
@@ -63,6 +66,7 @@ class ConseilDetails(Resource):
         description="Get a decision by id",
         model=ConseilDto.article_model,
     )
+    @require_authentication
     def get(self, decision_id: str):
         return ConseilService().get_decision_by_id(decision_id), HTTPStatus.OK
 
