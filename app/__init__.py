@@ -52,10 +52,7 @@ api.add_namespace(scrapping_ns, path="/scraping")
 app.register_blueprint(blueprint)
 
 # Set up logging
-log_file_path = "logs/app.log"
-handler = TimedRotatingFileHandler(
-    log_file_path, when="midnight", interval=1, backupCount=7
-)
+handler = logging.FileHandler("logs/app.log")
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)

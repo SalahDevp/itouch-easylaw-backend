@@ -18,6 +18,7 @@ Flask-Bcrypt==1.0.1
 Flask-Migrate==4.0.7
 flask-restx==1.0.3
 Flask-SQLAlchemy==3.0.2
+fpdf==1.7.2
 greenlet==3.0.1
 gunicorn==22.0.0
 idna==3.6
