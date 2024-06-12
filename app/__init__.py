@@ -1,5 +1,8 @@
 import os
 from app.main import create_app
+import logging
+from logging.handlers import TimedRotatingFileHandler
+
 
 from flask_restx import Api
 from flask import Blueprint
@@ -47,5 +50,25 @@ api.add_namespace(conseil_etat_ns, path="/conseil-etat")
 api.add_namespace(scrapping_ns, path="/scraping")
 
 app.register_blueprint(blueprint)
+
+# Set up logging
+log_file_path = "logs/app.log"
+handler = TimedRotatingFileHandler(
+    log_file_path, when="midnight", interval=1, backupCount=7
+)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+app.logger.setLevel(logging.INFO)
+
+
+@app.before_request
+def log_request_info():
+    from flask import request
+
+    if request.path not in ["/auth/login", "/auth/register"]:
+        app.logger.info("Headers: %s", request.headers)
+        app.logger.info("Body: %s", request.get_data(as_text=True))
+
 
 register_error_handlers(api)
