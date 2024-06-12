@@ -5,6 +5,7 @@ from app.main.service.search_service import SearchService
 from flask import request
 from app.main.controller.dto.supreme_court_dto import SupremeCourtDto
 from app.main.decorators.auth_decorators import require_authentication, allow_roles
+from app.main.decorators.subscription_decorators import allow_search_supreme_court
 
 api = SupremeCourtDto.api
 search_service = SearchService()
@@ -24,6 +25,8 @@ class SupremeCourt(Resource):
     @api.response(
         HTTPStatus.OK, description="Success", model=SupremeCourtDto.response_model
     )
+    @require_authentication
+    @allow_search_supreme_court
     def get(self):
         search_query = request.args.get("search_query", default="", type=str)
         page = request.args.get("page", default=1, type=int)
@@ -57,6 +60,7 @@ class SupremeCourtDetails(Resource):
         description="Get a decision by id",
         model=SupremeCourtDto.case_model,
     )
+    @require_authentication
     def get(self, decision_id: str):
         return SupremeCourtService().get_decision_by_id(decision_id), HTTPStatus.OK
 
