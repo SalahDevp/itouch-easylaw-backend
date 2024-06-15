@@ -52,8 +52,24 @@ api.add_namespace(scrapping_ns, path="/scraping")
 app.register_blueprint(blueprint)
 
 # Set up logging
-handler = logging.FileHandler("logs/app.log")
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler = TimedRotatingFileHandler(
+    "logs/app.log", when="midnight", interval=1, backupCount=7
+)
+
+
+class RequestFormatter(logging.Formatter):
+    def format(self, record):
+        from flask import request
+
+        record.url = request.url
+        record.remote_addr = request.remote_addr
+        record.route = request.path  # Add this line
+        return super().format(record)
+
+
+formatter = RequestFormatter(
+    "%(asctime)s - %(name)s - %(levelname)s - [%(remote_addr)s] - [%(route)s]: %(message)s"
+)
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 app.logger.setLevel(logging.INFO)
@@ -63,9 +79,18 @@ app.logger.setLevel(logging.INFO)
 def log_request_info():
     from flask import request
 
-    if request.path not in ["/auth/login", "/auth/register"]:
-        app.logger.info("Headers: %s", request.headers)
-        app.logger.info("Body: %s", request.get_data(as_text=True))
+    if request.path in ["/auth/login", "/auth/register"]:
+        return
+
+    app.logger.info("Headers: %s", request.headers)
+    if request.is_json:
+        app.logger.info("JSON Body: %s", request.get_json())
+    else:
+        app.logger.info(
+            "Body: %s", request.data.decode("utf-8")
+        )  # Decode binary data to string
+
+    app.logger.info("Remote IP: %s", request.remote_addr)
 
 
 register_error_handlers(api)
