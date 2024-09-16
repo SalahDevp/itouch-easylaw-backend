@@ -26,7 +26,7 @@ class Config:
                 )
 
 
-Config.check_env_vars()
+#Config.check_env_vars()
 
 
 class DevelopmentConfig(Config):
